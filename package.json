@@ -1,22 +1,20 @@
 {
   "name": "tonal-frequency-generator",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "next start"
   },
   "dependencies": {
-    "react": "^18",
-    "react-dom": "^18",
-    "next": "14.2.3"
-  },
-  "devDependencies": {
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.3"
+    "autoprefixer": "^10.4.19",
+    "next": "latest",
+    "postcss": "^8.4.38",
+    "react": "latest",
+    "react-dom": "latest",
+    "simplex-noise": "^3.0.1",
+    "styled-components": "^5.3.11",
+    "tailwindcss": "^3.4.4",
+    "three": "^0.130.1"
   }
 }
