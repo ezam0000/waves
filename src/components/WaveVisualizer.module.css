@@ -1,0 +1,24 @@
+.surface {
+  width: 100%;
+  height: 430px;
+  overflow: hidden;
+  background: radial-gradient(
+    ellipse at 50% 70%,
+    #12343a 0%,
+    #091b20 55%,
+    #07171b 100%
+  );
+}
+.surface canvas {
+  display: block;
+}
+@media (max-width: 760px) {
+  .surface {
+    height: 310px;
+  }
+}
+@media (max-width: 420px) {
+  .surface {
+    height: 270px;
+  }
+}
