@@ -370,6 +370,70 @@ test("mobile layout fits the screen and all controls remain reachable", async ({
   ).toBeVisible();
 });
 
+for (const size of [
+  { width: 320, height: 568 },
+  { width: 390, height: 844 },
+  { width: 430, height: 932 },
+  { width: 844, height: 390 },
+]) {
+  test(`graph stays visible while changing mobile controls at ${size.width}x${size.height}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(size);
+    await page.goto("/");
+    await expect(page.locator("canvas")).toHaveCount(1);
+    const graphVisible = async () => {
+      const box = await page.locator("canvas").boundingBox();
+      expect(box.y).toBeGreaterThanOrEqual(0);
+      expect(box.y + box.height).toBeLessThanOrEqual(size.height);
+      await expect(
+        page.getByRole("button", { name: "Play tone", exact: true }),
+      ).toBeInViewport();
+    };
+    const frequency = page.getByLabel("Frequency slider", { exact: true });
+    await frequency.scrollIntoViewIfNeeded();
+    await frequency.press("ArrowRight");
+    await graphVisible();
+    await page.getByRole("button", { name: "Square", exact: true }).click();
+    await graphVisible();
+    await page.getByRole("button", { name: "Waveform", exact: true }).click();
+    await expect(
+      page.getByText("Press Play to see the waveform"),
+    ).toBeVisible();
+    await graphVisible();
+    const volume = page.getByLabel("Volume", { exact: true });
+    await volume.scrollIntoViewIfNeeded();
+    await volume.press("Home");
+    await graphVisible();
+    await page.getByRole("button", { name: /Bright buzz/ }).click();
+    await graphVisible();
+    const targets = await page
+      .locator('button, a, input[type="range"], input[type="number"]')
+      .evaluateAll((nodes) =>
+        nodes
+          .map((node) => {
+            const rect = node.getBoundingClientRect();
+            return {
+              name:
+                node.getAttribute("aria-label") || node.textContent || node.id,
+              width: rect.width,
+              height: rect.height,
+            };
+          })
+          .filter((rect) => rect.height > 0),
+      );
+    for (const target of targets) {
+      expect(target.width, target.name).toBeGreaterThanOrEqual(44);
+      expect(target.height, target.name).toBeGreaterThanOrEqual(44);
+    }
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    ).toBe(true);
+  });
+}
+
 test("clipboard failure provides a selectable share link", async ({ page }) => {
   await page.goto("/");
   await page.evaluate(() => {

@@ -1,9 +1,23 @@
 :root {
+  --mobile-chart-height: clamp(96px, 16svh, 150px);
+  --waves-stage-height: 300px;
   color-scheme: dark;
   --bg: #081416;
   --text: #e6efec;
   --muted: #8caaa9;
   --cyan: #79e8dc;
+}
+@media (max-width: 760px), (max-height: 500px) {
+  html {
+    scroll-padding-top: calc(
+      var(--waves-stage-height) + env(safe-area-inset-top, 0px) + 20px
+    );
+  }
+  button,
+  input,
+  a {
+    scroll-margin-block: 12px;
+  }
 }
 * {
   box-sizing: border-box;
