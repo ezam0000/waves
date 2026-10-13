@@ -8,6 +8,8 @@ A playful browser instrument for shaping a tone and watching it move. Explore fo
 
 ## Explore
 
+On phones and short landscape screens, the compact graph and Play/Stop stay visible while you scroll the controls and presets. Touch targets are at least 44 CSS pixels, with larger labels and safe-area spacing.
+
 - Start with **440 Hz, sine, 10% volume**. Audio stays stopped until you press **Play tone**.
 - Enter a frequency between **20 and 20,000 Hz**, or use the logarithmic slider. The maximum also respects your audio device's sample rate.
 - Try sine, triangle, square, or sawtooth. The four presets preserve your volume and playback state.

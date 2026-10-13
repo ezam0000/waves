@@ -22,3 +22,8 @@
     height: 270px;
   }
 }
+@media (max-width: 760px), (max-height: 500px) {
+  .surface {
+    height: var(--mobile-chart-height);
+  }
+}

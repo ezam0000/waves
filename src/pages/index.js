@@ -26,6 +26,22 @@ export default function Home() {
     initialPlayground,
   );
   const controllerRef = useRef(null);
+  const stageRef = useRef(null);
+  useEffect(() => {
+    const stage = stageRef.current;
+    const measure = () =>
+      document.documentElement.style.setProperty(
+        "--waves-stage-height",
+        `${Math.ceil(stage.getBoundingClientRect().height)}px`,
+      );
+    const observer = new ResizeObserver(measure);
+    observer.observe(stage);
+    measure();
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty("--waves-stage-height");
+    };
+  }, []);
   const {
     settings,
     draft,
@@ -106,7 +122,10 @@ export default function Home() {
           name="description"
           content="A playful tone generator with a cyan 3D wave surface and a live audio waveform. Shape a sound, find a preset, and share your experiment."
         />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, viewport-fit=cover"
+        />
         <meta name="theme-color" content="#081416" />
         <meta property="og:title" content="Waves — sound in motion" />
         <meta
@@ -149,25 +168,39 @@ export default function Home() {
             </p>
           </section>
           <div className={styles.instrument}>
-            <section className={styles.stage} aria-label="Sound visualization">
+            <section
+              ref={stageRef}
+              className={styles.stage}
+              aria-label="Sound visualization"
+            >
               <div className={styles.stageHeader}>
                 <div>
                   <span className={styles.stageEyebrow}>LIVE CANVAS</span>
                   <h2>The shape of sound</h2>
                 </div>
-                <span
-                  className={`${styles.status} ${status === "playing" ? styles.statusActive : ""}`}
-                  role="status"
-                >
-                  <span />
-                  {status === "playing"
-                    ? "Playing"
-                    : status === "starting"
-                      ? "Starting"
-                      : status === "error"
-                        ? "Audio unavailable"
-                        : "Stopped"}
-                </span>
+                <div className={styles.stageTransport}>
+                  <span
+                    className={`${styles.status} ${status === "playing" ? styles.statusActive : ""}`}
+                    role="status"
+                  >
+                    <span />
+                    {status === "playing"
+                      ? "Playing"
+                      : status === "starting"
+                        ? "Starting"
+                        : status === "error"
+                          ? "Audio unavailable"
+                          : "Stopped"}
+                  </span>
+                  <button
+                    className={styles.play}
+                    type="button"
+                    onClick={togglePlayback}
+                    disabled={!active && Boolean(frequencyError)}
+                  >
+                    {active ? "Stop" : "Play tone"}
+                  </button>
+                </div>
               </div>
               <WaveVisualizer
                 settings={settings}
@@ -197,7 +230,9 @@ export default function Home() {
                 <p>
                   {settings.view === "wireframe"
                     ? "A stylized interpretation"
-                    : "Your actual audio output"}
+                    : status === "playing"
+                      ? "Your actual audio output"
+                      : "Press Play to see the waveform"}
                 </p>
               </div>
             </section>
@@ -295,14 +330,6 @@ export default function Home() {
                   })
                 }
               />
-              <button
-                className={styles.play}
-                type="button"
-                onClick={togglePlayback}
-                disabled={!active && Boolean(frequencyError)}
-              >
-                {active ? "Stop" : "Play tone"}
-              </button>
               <p className={styles.playHint}>
                 Start quietly. Press Esc to stop.
               </p>
