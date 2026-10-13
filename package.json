@@ -1,20 +1,33 @@
 {
-  "name": "tonal-frequency-generator",
-  "version": "1.0.0",
+  "name": "waves",
+  "version": "2.0.0",
+  "private": true,
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "eslint .",
+    "format": "prettier --write src tests *.mjs package.json README.md .github",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:browser": "playwright test",
+    "check": "npm run lint && npm test && npm run build"
   },
   "dependencies": {
-    "autoprefixer": "^10.4.19",
-    "next": "latest",
-    "postcss": "^8.4.38",
-    "react": "latest",
-    "react-dom": "latest",
-    "simplex-noise": "^3.0.1",
-    "styled-components": "^5.3.11",
-    "tailwindcss": "^3.4.4",
-    "three": "^0.130.1"
+    "next": "16.4.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "simplex-noise": "4.0.3",
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.4.0",
+    "prettier": "3.9.10",
+    "vitest": "5.0.4"
   }
 }

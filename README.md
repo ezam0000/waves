@@ -1,55 +1,77 @@
 # Waves
 
-A browser-based sine-wave tone generator with an animated 3D wireframe visualization. Built with Next.js, React, the Web Audio API, and Three.js.
+A playful browser instrument for shaping a tone and watching it move. Explore four wave shapes, a cyan 3D wireframe, and an oscilloscope drawn from the actual audio output.
 
-[Try the live demo](https://waves-beige-nine.vercel.app/) · [Ask a question](https://github.com/ezam0000/waves/discussions/categories/q-a) · [Report a bug](https://github.com/ezam0000/waves/issues)
+[Try Waves](https://waves-beige-nine.vercel.app/) · [Ask a question](https://github.com/ezam0000/waves/discussions/categories/q-a) · [Report a bug](https://github.com/ezam0000/waves/issues)
 
-![Waves demo showing the 440 Hz frequency input, Start Tone and Stop Tone controls, and a cyan wireframe visualization.](docs/images/waves-demo.jpg)
+![Waves with its cyan wireframe, frequency and volume controls, waveform choices, and four sound presets.](docs/images/waves-demo.jpg)
 
-## Try it
+## Explore
 
-1. Open the [live demo](https://waves-beige-nine.vercel.app/) in a browser with Web Audio and WebGL support.
-2. Set your system volume low, then enter a frequency in hertz. The default is **440 Hz**.
-3. Click **Start Tone** to play a sine wave.
-4. Change the frequency while the tone is playing to update the sound and visualization.
-5. Click **Stop Tone** to stop the sound.
+- Start with **440 Hz, sine, 10% volume**. Audio stays stopped until you press **Play tone**.
+- Enter a frequency between **20 and 20,000 Hz**, or use the logarithmic slider. The maximum also respects your audio device's sample rate.
+- Try sine, triangle, square, or sawtooth. The four presets preserve your volume and playback state.
+- Switch between **3D wireframe**, a stylized interpretation, and **Waveform**, the actual output measured by Web Audio.
+- Press **Stop** or **Esc** to stop. Hiding the tab also stops audio; returning never restarts it automatically.
+- **Reset** stops playback and restores defaults. **Copy link** shares frequency, wave shape, and view, without sharing volume or autoplay.
 
-Audio starts after a button click. If you do not hear it, check that the tab and your output device are not muted. The wireframe is a procedural visual effect driven by the frequency value, not a measured audio waveform.
+Start with your system volume low. If you cannot hear a tone, check the tab, your output device, and the app's volume control. Browser interruptions show a message and require another Play action.
+
+The wireframe pauses when stopped, hidden, or reduced motion is enabled. Browsers without WebGL fall back to the 2D waveform. All audio is generated locally; no account, backend, microphone access, or environment variables are required.
 
 ## Run locally
 
-Install Node.js and npm, then clone the repository and install its dependencies:
+Use **Node.js 24 LTS**; the exact tested runtime is pinned in `.nvmrc`.
 
 ```sh
 git clone https://github.com/ezam0000/waves.git
 cd waves
-npm install
+nvm install
+nvm use
+npm ci
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). The home page is `src/pages/index.js`.
+If you do not use nvm, install Node.js 24 directly before running `npm ci`. Open [localhost:3000](http://localhost:3000).
 
-To build and run the production version locally:
+For a production build:
 
 ```sh
 npm run build
 npm start
 ```
 
+## Checks
+
+```sh
+npm run check
+npx playwright install chromium firefox webkit
+npm run test:browser
+```
+
+`check` runs lint, 40 unit tests, and the production build. Browser checks cover Chromium, Firefox, and WebKit, including measured pitch and gain, silence, presets, sharing, keyboard controls, mobile sizing, reduced motion, context loss, and graphics cleanup. The browser suite owns port **4317** and refuses to reuse another app's server. Linux GitHub Actions runs the complete suite for pull requests and main.
+
+Some macOS installations currently prevent Playwright's Firefox from opening its profile ([upstream issue](https://github.com/microsoft/playwright/issues/42768)). Chromium and WebKit can still be checked locally:
+
+```sh
+npm run test:browser -- --project=chromium --project=webkit
+```
+
+Audio tests inspect native browser signal data and offline renders. They do not certify physical speakers, headphones, or phones; verify those separately at low volume. `npm audit --omit=dev` checks production dependency advisories. Next's development lint dependency currently has an upstream, unpatched `braces` advisory; do not use `npm audit fix --force`, which proposes downgrading the framework.
+
+Other commands: `npm run test:watch` for unit tests during development and `npm run format` for source formatting.
+
 ## How it works
 
-| File | Purpose |
-| --- | --- |
-| [`src/pages/index.js`](src/pages/index.js) | Connects the tone controls and visualization through shared frequency state. |
-| [`src/components/ToneGenerator.js`](src/components/ToneGenerator.js) | Creates a Web Audio sine-wave oscillator and provides frequency, start, and stop controls. |
-| [`src/components/WaveVisualizer.js`](src/components/WaveVisualizer.js) | Animates a Three.js wireframe plane using the frequency value and simplex noise. |
+| Module                                                      | Responsibility                                                                                       |
+| ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `src/pages/index.js`                                        | Accessible single-page interface and shared playground state.                                        |
+| `src/lib/audio.js`                                          | One reusable audio context and oscillator, smooth gain changes, pause/resume, sampling, and cleanup. |
+| `src/lib/settings.js` / `src/lib/playground.js`             | Validation, logarithmic frequency mapping, presets, and share-link parsing.                          |
+| `src/components/WaveVisualizer.js` / `src/lib/animation.js` | Container-sized visuals, one frame loop, resource disposal, reduced motion, and fallback.            |
 
-The interface uses styled-components. The demo is hosted on Vercel.
+Built with pinned Next.js 16, React 19, Three.js, simplex-noise, and CSS Modules. The Pages Router produces a static home page; graphics load in a separate client bundle. Vercel creates previews from feature branches and production deployments from main. Previous deployments remain available through Vercel's deployment history for rollback.
 
 ## Questions and contributions
 
-Use [Q&A Discussions](https://github.com/ezam0000/waves/discussions/categories/q-a) for setup and usage questions. If a reply solves your question, mark it as the answer so others can find it.
-
-For bugs, [open an issue](https://github.com/ezam0000/waves/issues) with your browser, the steps to reproduce the problem, and what you expected to happen. Focused pull requests are welcome.
-
-If you find Waves useful, a star helps other people discover the project.
+Use [Q&A Discussions](https://github.com/ezam0000/waves/discussions/categories/q-a) for questions and ideas. For bugs, [open an issue](https://github.com/ezam0000/waves/issues) with your browser, reproduction steps, and expected behavior. Focused pull requests with passing checks are welcome.
