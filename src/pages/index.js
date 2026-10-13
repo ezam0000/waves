@@ -251,10 +251,14 @@ export default function Home() {
                 <input
                   id="frequency"
                   type="number"
-                  inputMode="decimal"
+                  inputMode="numeric"
                   min="20"
                   max={maxFrequency}
-                  step="0.01"
+                  step="1"
+                  onKeyDown={(event) => {
+                    if (event.key === "." || event.key === ",")
+                      event.preventDefault();
+                  }}
                   value={draft}
                   aria-invalid={Boolean(frequencyError)}
                   aria-describedby={

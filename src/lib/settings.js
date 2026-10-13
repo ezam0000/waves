@@ -16,7 +16,7 @@ export const PRESETS = Object.freeze([
   },
   {
     name: "Middle C",
-    frequency: 261.63,
+    frequency: 262,
     waveform: "triangle",
     description: "A softer starting note.",
   },
@@ -46,7 +46,7 @@ export function validateFrequency(value, max = MAX_FREQUENCY) {
       error: `Enter a frequency between 20 and ${max.toLocaleString("en-US")} Hz.`,
     };
   }
-  return { frequency };
+  return { frequency: Math.round(frequency) };
 }
 
 export function frequencyToSlider(frequency, max = MAX_FREQUENCY) {
@@ -56,10 +56,8 @@ export function frequencyToSlider(frequency, max = MAX_FREQUENCY) {
 }
 
 export function sliderToFrequency(value, max = MAX_FREQUENCY) {
-  return (
-    Math.round(
-      MIN_FREQUENCY * (max / MIN_FREQUENCY) ** (Number(value) / 1000) * 100,
-    ) / 100
+  return Math.round(
+    MIN_FREQUENCY * (max / MIN_FREQUENCY) ** (Number(value) / 1000),
   );
 }
 
@@ -78,12 +76,12 @@ export function parseShareSettings(search) {
 
 export function createShareUrl(origin, settings) {
   const url = new URL("/", origin);
-  url.searchParams.set("frequency", String(settings.frequency));
+  url.searchParams.set("frequency", String(Math.round(settings.frequency)));
   url.searchParams.set("waveform", settings.waveform);
   url.searchParams.set("view", settings.view);
   return url.toString();
 }
 
 export function formatFrequency(value) {
-  return value.toLocaleString("en-US", { maximumFractionDigits: 2 });
+  return value.toLocaleString("en-US", { maximumFractionDigits: 0 });
 }

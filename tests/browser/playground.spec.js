@@ -106,6 +106,19 @@ test("defaults, validation, presets, and reset are accessible", async ({
   await expect(page.getByLabel("Frequency", { exact: true })).toHaveValue(
     "440",
   );
+  await expect(page.getByLabel("Frequency", { exact: true })).toHaveAttribute(
+    "step",
+    "1",
+  );
+  await expect(page.getByLabel("Frequency", { exact: true })).toHaveAttribute(
+    "inputmode",
+    "numeric",
+  );
+  await page.getByLabel("Frequency", { exact: true }).fill("2089.44");
+  await expect(page.getByLabel("Frequency", { exact: true })).toHaveValue(
+    "2089",
+  );
+  await page.getByRole("button", { name: "Reset", exact: true }).click();
   await expect(page.getByLabel("Volume", { exact: true })).toHaveValue("10");
   await expect(
     page.getByRole("button", { name: "Play tone", exact: true }),
@@ -126,7 +139,7 @@ test("defaults, validation, presets, and reset are accessible", async ({
   await setRange(page.getByLabel("Volume", { exact: true }), 25);
   await page.getByRole("button", { name: /Middle C/ }).click();
   await expect(page.getByLabel("Frequency", { exact: true })).toHaveValue(
-    "261.63",
+    "262",
   );
   await expect(
     page.getByRole("button", { name: "Triangle", exact: true }),
@@ -149,7 +162,7 @@ test("share links restore sound and view without autoplay or volume", async ({
     "/?frequency=261.63&waveform=triangle&view=waveform&volume=1&playing=true",
   );
   await expect(page.getByLabel("Frequency", { exact: true })).toHaveValue(
-    "261.63",
+    "262",
   );
   await expect(
     page.getByRole("button", { name: "Triangle", exact: true }),
@@ -204,7 +217,7 @@ test("actual audio follows frequency, volume, presets, and Stop", async ({
     page.getByRole("button", { name: "Stop", exact: true }),
   ).toBeVisible();
   await expect
-    .poll(async () => Math.abs((await signal(page)).frequency - 261.63))
+    .poll(async () => Math.abs((await signal(page)).frequency - 262))
     .toBeLessThan(5);
   await expect(page.getByLabel("Volume", { exact: true })).toHaveValue("25");
   await page.keyboard.press("Escape");

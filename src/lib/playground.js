@@ -26,7 +26,7 @@ export function playgroundReducer(state, action) {
       const result = validateFrequency(action.value, state.maxFrequency);
       return {
         ...state,
-        draft: String(action.value),
+        draft: String(result.error ? action.value : result.frequency),
         frequencyError: result.error || "",
         copyStatus: "",
         settings: result.error

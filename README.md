@@ -11,7 +11,7 @@ A playful browser instrument for shaping a tone and watching it move. Explore fo
 On phones and short landscape screens, the compact graph and Play/Stop stay visible while you scroll the controls and presets. Touch targets are at least 44 CSS pixels, with larger labels and safe-area spacing.
 
 - Start with **440 Hz, sine, 10% volume**. Audio stays stopped until you press **Play tone**.
-- Enter a frequency between **20 and 20,000 Hz**, or use the logarithmic slider. The maximum also respects your audio device's sample rate.
+- Enter a frequency between **20 and 20,000 Hz**, or use the logarithmic slider. Frequencies use whole hertz; pasted decimal values and older shared links round to the nearest hertz. The maximum also respects your audio device's sample rate.
 - Try sine, triangle, square, or sawtooth. The four presets preserve your volume and playback state.
 - Switch between **3D wireframe**, a stylized interpretation, and **Waveform**, the actual output measured by Web Audio.
 - Press **Stop** or **Esc** to stop. Hiding the tab also stops audio; returning never restarts it automatically.
@@ -51,7 +51,7 @@ npx playwright install chromium firefox webkit
 npm run test:browser
 ```
 
-`check` runs lint, 40 unit tests, and the production build. Browser checks cover Chromium, Firefox, and WebKit, including measured pitch and gain, silence, presets, sharing, keyboard controls, mobile sizing, reduced motion, context loss, and graphics cleanup. The browser suite owns port **4317** and refuses to reuse another app's server. Linux GitHub Actions runs the complete suite for pull requests and main.
+`check` runs lint, unit tests, and the production build. Browser checks cover Chromium, Firefox, and WebKit, including measured pitch and gain, silence, presets, sharing, keyboard controls, mobile sizing, reduced motion, context loss, and graphics cleanup. The browser suite owns port **4317** and refuses to reuse another app's server. Linux GitHub Actions runs the complete suite for pull requests and main.
 
 Some macOS installations currently prevent Playwright's Firefox from opening its profile ([upstream issue](https://github.com/microsoft/playwright/issues/42768)). Chromium and WebKit can still be checked locally:
 
