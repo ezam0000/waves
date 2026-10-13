@@ -119,6 +119,14 @@ test("defaults, validation, presets, and reset are accessible", async ({
     "2089",
   );
   await page.getByRole("button", { name: "Reset", exact: true }).click();
+  await page.getByLabel("Frequency", { exact: true }).fill("20");
+  await page
+    .getByLabel("Frequency slider", { exact: true })
+    .press("ArrowRight");
+  await expect(page.getByLabel("Frequency", { exact: true })).toHaveValue("21");
+  await page.getByLabel("Frequency slider", { exact: true }).press("ArrowLeft");
+  await expect(page.getByLabel("Frequency", { exact: true })).toHaveValue("20");
+  await page.getByRole("button", { name: "Reset", exact: true }).click();
   await expect(page.getByLabel("Volume", { exact: true })).toHaveValue("10");
   await expect(
     page.getByRole("button", { name: "Play tone", exact: true }),

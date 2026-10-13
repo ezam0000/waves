@@ -279,6 +279,24 @@ export default function Home() {
                 aria-label="Frequency slider"
                 aria-valuetext={`${formatFrequency(settings.frequency)} hertz`}
                 value={frequencyToSlider(settings.frequency, maxFrequency)}
+                onKeyDown={(event) => {
+                  const direction = {
+                    ArrowRight: 1,
+                    ArrowUp: 1,
+                    ArrowLeft: -1,
+                    ArrowDown: -1,
+                  }[event.key];
+                  if (direction) {
+                    event.preventDefault();
+                    dispatch({
+                      type: "frequency",
+                      value: Math.min(
+                        maxFrequency,
+                        Math.max(20, settings.frequency + direction),
+                      ),
+                    });
+                  }
+                }}
                 onChange={(event) =>
                   dispatch({
                     type: "frequency",
