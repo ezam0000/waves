@@ -4,6 +4,7 @@ import {
   PRESETS,
   createShareUrl,
   frequencyToSlider,
+  formatFrequency,
   parseShareSettings,
   sliderToFrequency,
   validateFrequency,
@@ -11,6 +12,10 @@ import {
 import { initialPlayground, playgroundReducer } from "../../src/lib/playground";
 
 describe("frequency and sharing", () => {
+  it("shows whole hertz when moving the slider or formatting frequency", () => {
+    expect(Number.isInteger(sliderToFrequency(673))).toBe(true);
+    expect(formatFrequency(2089.44)).toBe("2,089");
+  });
   it.each(["", " ", "nope", "Infinity", NaN, Infinity, -1, 0, 19.99, 20000.01])(
     "rejects invalid frequency %s",
     (value) => {
@@ -18,7 +23,9 @@ describe("frequency and sharing", () => {
     },
   );
   it.each([20, 261.63, 440, 20000])("accepts %s Hz", (value) =>
-    expect(validateFrequency(String(value))).toEqual({ frequency: value }),
+    expect(validateFrequency(String(value))).toEqual({
+      frequency: Math.round(value),
+    }),
   );
   it("respects the audio device limit", () =>
     expect(validateFrequency(12000, 11024).error).toBeTruthy());
@@ -48,7 +55,7 @@ describe("frequency and sharing", () => {
     ]);
     expect(url.pathname).toBe("/");
     expect(parseShareSettings(url.search)).toEqual({
-      frequency: 261.63,
+      frequency: 262,
       waveform: "triangle",
       volume: 0.1,
       view: "waveform",
@@ -57,6 +64,15 @@ describe("frequency and sharing", () => {
 });
 
 describe("playground state", () => {
+  it("rounds pasted decimal frequency and its visible draft together", () => {
+    const state = playgroundReducer(initialPlayground(), {
+      type: "frequency",
+      value: "2089.44",
+    });
+    expect(state.settings.frequency).toBe(2089);
+    expect(state.draft).toBe("2089");
+    expect(state.frequencyError).toBe("");
+  });
   it("preserves the valid sound when the draft is empty or invalid", () => {
     const state = playgroundReducer(initialPlayground(), {
       type: "frequency",

@@ -251,10 +251,14 @@ export default function Home() {
                 <input
                   id="frequency"
                   type="number"
-                  inputMode="decimal"
+                  inputMode="numeric"
                   min="20"
                   max={maxFrequency}
-                  step="0.01"
+                  step="1"
+                  onKeyDown={(event) => {
+                    if (event.key === "." || event.key === ",")
+                      event.preventDefault();
+                  }}
                   value={draft}
                   aria-invalid={Boolean(frequencyError)}
                   aria-describedby={
@@ -275,6 +279,24 @@ export default function Home() {
                 aria-label="Frequency slider"
                 aria-valuetext={`${formatFrequency(settings.frequency)} hertz`}
                 value={frequencyToSlider(settings.frequency, maxFrequency)}
+                onKeyDown={(event) => {
+                  const direction = {
+                    ArrowRight: 1,
+                    ArrowUp: 1,
+                    ArrowLeft: -1,
+                    ArrowDown: -1,
+                  }[event.key];
+                  if (direction) {
+                    event.preventDefault();
+                    dispatch({
+                      type: "frequency",
+                      value: Math.min(
+                        maxFrequency,
+                        Math.max(20, settings.frequency + direction),
+                      ),
+                    });
+                  }
+                }}
                 onChange={(event) =>
                   dispatch({
                     type: "frequency",
